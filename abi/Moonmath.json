@@ -1,0 +1,10 @@
+[
+    {
+        "inputs": [],
+        "name": "performInteraction",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    }
+]
+
