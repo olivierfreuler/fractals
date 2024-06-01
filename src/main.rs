@@ -34,13 +34,32 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialisiere den Contract
     let contract = Moonmath::new(contract_address, client);
 
-    // Beispiel: Aufruf der performInteraction Funktion
+    // Beispiel: Berechne das Mandelbrot-Set und sende die Daten an den Smart Contract
+    let fractal_value = calculate_mandelbrot(0.5, 0.5, 1000);
+
+    // Beispiel: Aufruf der performInteraction Funktion mit einem fraktalen Wert
     let binding = contract
         .perform_interaction()
         .value(ethers::utils::parse_ether("0.00001").unwrap());
     let tx = binding.send().await?;
 
     println!("Transaction hash: {:?}", tx);
+    println!("Calculated fractal value: {}", fractal_value);
     Ok(())
+}
+
+fn calculate_mandelbrot(x: f64, y: f64, max_iterations: u32) -> u32 {
+    let mut zx = 0.0;
+    let mut zy = 0.0;
+    let mut iteration = 0;
+
+    while zx * zx + zy * zy <= 4.0 && iteration < max_iterations {
+        let tmp = zx * zx - zy * zy + x;
+        zy = 2.0 * zx * zy + y;
+        zx = tmp;
+        iteration += 1;
+    }
+
+    iteration
 }
 
