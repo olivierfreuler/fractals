@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserProvider, parseEther, Contract } from 'ethers';
+import { Stage, Layer, Rect } from 'react-konva';
+import { useSpring, animated } from '@react-spring/web';
 
 const Fractal = () => {
   const [mandelbrotValue, setMandelbrotValue] = useState(0);
@@ -30,8 +32,7 @@ const Fractal = () => {
     };
 
     initializeContract();
-  }, []);  // Füge contractABI nicht hinzu, ESLint Warnung wird deaktiviert
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const calculateFractals = async () => {
     const newMandelbrotValue = calculateMandelbrot(0.5, 0.5, 1000);
@@ -82,6 +83,34 @@ const Fractal = () => {
     return iteration;
   };
 
+  const drawMandelbrot = () => {
+    const width = 800;
+    const height = 600;
+    const magnificationFactor = 200;
+    const panX = 2;
+    const panY = 1.5;
+    const rects = [];
+    for (let x = 0; x < width; x++) {
+      for (let y = 0; y < height; y++) {
+        let zx = 0;
+        let zy = 0;
+        const cx = (x / magnificationFactor) - panX;
+        const cy = (y / magnificationFactor) - panY;
+        let iteration = 0;
+        const maxIteration = 1000;
+        while (zx * zx + zy * zy < 4 && iteration < maxIteration) {
+          const tmp = zx * zx - zy * zy + cx;
+          zy = 2 * zx * zy + cy;
+          zx = tmp;
+          iteration++;
+        }
+        const color = iteration === maxIteration ? 0 : iteration * 255 / maxIteration;
+        rects.push(<Rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={`rgb(${color}, ${color}, ${color})`} />);
+      }
+    }
+    return rects;
+  };
+
   return (
     <div>
       <h1>Fractal Generator</h1>
@@ -90,6 +119,11 @@ const Fractal = () => {
         <h2>Mandelbrot Value: {mandelbrotValue}</h2>
         <h2>Julia Value: {juliaValue}</h2>
       </div>
+      <Stage width={800} height={600}>
+        <Layer>
+          {drawMandelbrot()}
+        </Layer>
+      </Stage>
     </div>
   );
 };
