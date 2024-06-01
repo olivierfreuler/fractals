@@ -1,0 +1,11 @@
+[package]
+name = "fractals"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rand = "0.8"
+ethers = "2.0.14"
+tokio = { version = "1.0", features = ["full"] }
+ethers-middleware = "2.0.14"
+
