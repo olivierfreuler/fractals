@@ -35,8 +35,8 @@ const Fractal = () => {
   }, []);
 
   const calculateFractals = async () => {
-    const newMandelbrotValue = calculateMandelbrot(0.5, 0.5, 1000);
-    const newJuliaValue = calculateJulia(0.5, 0.5, 0.355, 0.355, 1000);
+    const newMandelbrotValue = calculateMandelbrot(-0.5, 0, 1000);
+    const newJuliaValue = calculateJulia(0, 0, -0.4, 0.6, 1000);
 
     setMandelbrotValue(newMandelbrotValue);
     setJuliaValue(newJuliaValue);
@@ -53,15 +53,15 @@ const Fractal = () => {
     }
   };
 
-  const calculateMandelbrot = (x, y, maxIterations) => {
-    let zx = 0.0;
-    let zy = 0.0;
+  const calculateMandelbrot = (x0, y0, maxIterations) => {
+    let x = 0;
+    let y = 0;
     let iteration = 0;
 
-    while (zx * zx + zy * zy <= 4.0 && iteration < maxIterations) {
-      const tmp = zx * zx - zy * zy + x;
-      zy = 2.0 * zx * zy + y;
-      zx = tmp;
+    while (x*x + y*y <= 4 && iteration < maxIterations) {
+      let xtemp = x*x - y*y + x0;
+      y = 2*x*y + y0;
+      x = xtemp;
       iteration += 1;
     }
 
@@ -69,14 +69,12 @@ const Fractal = () => {
   };
 
   const calculateJulia = (x, y, cx, cy, maxIterations) => {
-    let zx = x;
-    let zy = y;
     let iteration = 0;
 
-    while (zx * zx + zy * zy <= 4.0 && iteration < maxIterations) {
-      const tmp = zx * zx - zy * zy + cx;
-      zy = 2.0 * zx * zy + cy;
-      zx = tmp;
+    while (x*x + y*y <= 4 && iteration < maxIterations) {
+      let xtemp = x*x - y*y + cx;
+      y = 2*x*y + cy;
+      x = xtemp;
       iteration += 1;
     }
 
@@ -86,25 +84,14 @@ const Fractal = () => {
   const drawMandelbrot = () => {
     const width = 800;
     const height = 600;
-    const magnificationFactor = 200;
+    const magnificationFactor = 400;
     const panX = 2;
     const panY = 1.5;
     const rects = [];
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
-        let zx = 0;
-        let zy = 0;
-        const cx = (x / magnificationFactor) - panX;
-        const cy = (y / magnificationFactor) - panY;
-        let iteration = 0;
-        const maxIteration = 1000;
-        while (zx * zx + zy * zy < 4 && iteration < maxIteration) {
-          const tmp = zx * zx - zy * zy + cx;
-          zy = 2 * zx * zy + cy;
-          zx = tmp;
-          iteration++;
-        }
-        const color = iteration === maxIteration ? 0 : iteration * 255 / maxIteration;
+        const mandelbrotValue = calculateMandelbrot((x / magnificationFactor) - panX, (y / magnificationFactor) - panY, 1000);
+        const color = mandelbrotValue === 1000 ? 0 : mandelbrotValue * 255 / 1000;
         rects.push(<Rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={`rgb(${color}, ${color}, ${color})`} />);
       }
     }
