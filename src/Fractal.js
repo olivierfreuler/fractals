@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { BrowserProvider, Contract, ethers } from 'ethers';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { providers, Contract } from 'ethers';
+import { parseEther } from 'ethers/lib/utils';
 import { Stage, Layer, Rect } from 'react-konva';
 
 const Fractal = () => {
@@ -8,6 +9,7 @@ const Fractal = () => {
   const [zoom, setZoom] = useState(1);
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
+  const stageRef = useRef(null);
 
   const contractAddress = "0x4c1fF993E16b493aEC456117d1B515567118188e";
   const contractABI = useMemo(() => [
@@ -23,7 +25,7 @@ const Fractal = () => {
   useEffect(() => {
     const initializeContract = async () => {
       if (window.ethereum) {
-        const provider = new BrowserProvider(window.ethereum);
+        const provider = new providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const fractalContract = new Contract(contractAddress, contractABI, signer);
         setContract(fractalContract);
@@ -35,46 +37,11 @@ const Fractal = () => {
     initializeContract();
   }, [contractABI]);
 
-  const generateFractalData = () => {
-    const data = [];
-    const width = 800;
-    const height = 600;
-
-    for (let x = 0; x < width; x++) {
-      for (let y = 0; y < height; y++) {
-        let zx = (x - width / 2) / zoom + offsetX;
-        let zy = (y - height / 2) / zoom + offsetY;
-        let i = 0;
-        let zx2 = zx * zx;
-        let zy2 = zy * zy;
-
-        while (zx2 + zy2 < 4 && i < 255) {
-          zy = 2 * zx * zy + zy;
-          zx = zx2 - zy2 + zx;
-          zx2 = zx * zx;
-          zy2 = zy * zy;
-          i++;
-        }
-
-        data.push({ x, y, color: i === 255 ? 'black' : `rgb(${i}, ${i}, ${i})` });
-      }
-    }
-    setFractalData(data);
-  };
-
-  useEffect(() => {
-    generateFractalData();
-  }, [zoom, offsetX, offsetY]);
-
-  const handleZoom = (event) => {
-    setZoom(prevZoom => prevZoom * (event.evt.deltaY > 0 ? 1.1 : 0.9));
-  };
-
-  const handleInteraction = async () => {
+  const calculateFractals = async () => {
     if (contract) {
       try {
         const tx = await contract.performInteraction({
-          value: ethers.parseEther('0.00001')
+          value: parseEther('0.00001')
         });
         console.log('Transaction:', tx);
       } catch (error) {
@@ -83,13 +50,56 @@ const Fractal = () => {
     }
   };
 
+  const generateFractalData = useCallback(() => {
+    const worker = new Worker(new URL('./fractalWorker.js', import.meta.url));
+    worker.postMessage({ zoom, offsetX, offsetY });
+
+    worker.onmessage = (e) => {
+      setFractalData(e.data);
+    };
+
+    return () => {
+      worker.terminate();
+    };
+  }, [zoom, offsetX, offsetY]);
+
+  useEffect(() => {
+    generateFractalData();
+  }, [generateFractalData]);
+
+  const handleWheel = (e) => {
+    e.evt.preventDefault();
+    const scaleBy = 1.1;
+    const stage = stageRef.current;
+    const oldScale = stage.scaleX();
+    const pointer = stage.getPointerPosition();
+
+    const mousePointTo = {
+      x: (pointer.x - stage.x()) / oldScale,
+      y: (pointer.y - stage.y()) / oldScale,
+    };
+
+    const newScale = e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+
+    setZoom(newScale);
+    setOffsetX(pointer.x / newScale - mousePointTo.x);
+    setOffsetY(pointer.y / newScale - mousePointTo.y);
+  };
+
   return (
     <div>
-      <button onClick={handleInteraction}>Generate Fractals and Interact On-Chain</button>
-      <Stage width={800} height={600} onWheel={handleZoom}>
+      <button onClick={calculateFractals}>Calculate Fractals</button>
+      <Stage width={800} height={600} onWheel={handleWheel} ref={stageRef}>
         <Layer>
-          {fractalData.map((pixel, index) => (
-            <Rect key={index} x={pixel.x} y={pixel.y} width={1} height={1} fill={pixel.color} />
+          {fractalData.map((point, index) => (
+            <Rect
+              key={index}
+              x={point.x}
+              y={point.y}
+              width={1}
+              height={1}
+              fill={point.color}
+            />
           ))}
         </Layer>
       </Stage>

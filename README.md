@@ -1,91 +1,16 @@
-<<<<<<< HEAD
-# Getting Started with Create React App
+# Fractals
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a fractal generator that interacts with an Ethereum smart contract on the Kakarot testnet. It generates fractal images (Mandelbrot and Julia sets) and allows users to interact with the smart contract by sending small amounts of Ether.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- Generate Mandelbrot and Julia fractal images
+- Interact with an Ethereum smart contract on the Kakarot testnet
+- Visualize fractals using `react-konva` and `konva`
 
-### `npm start`
+## Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-=======
-# Fractals Project
-
-This project demonstrates how to interact with an Ethereum smart contract on the Kakarot test network using Rust. It includes a function to calculate fractal values (Mandelbrot set) and sends these values to a smart contract.
-
-## Steps Taken
-
-1. Set up a new Rust project and added necessary dependencies.
-2. Created and deployed a smart contract on the Kakarot test network.
-3. Implemented a Rust program to calculate fractal values and interact with the deployed smart contract.
-4. Sent a transaction to the smart contract and verified its execution.
-
-## How to Run
-
-1. Ensure you have Rust and Cargo installed.
-2. Clone this repository:
+1. Clone the repository:
    ```sh
    git clone https://github.com/welttowelt/fractals.git
 
->>>>>>> 14a688f26bde02bb6f09cbca969955ca8504e426
